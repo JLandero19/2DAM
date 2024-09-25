@@ -35,31 +35,34 @@ public class Main {
         // FileInputStream es para crear el flujo
         // PrintStream ps -> recoge ps.println() o ps.format()
         try (FileInputStream fis = new FileInputStream(new File(nameFile))){
-
-            // Es un array, que recogerá el número de bytes
+            // Buffer de lectura de [32 bytes]
             byte[] buffer = new byte[32];
             // Aguí guardaremos los bytes leidos por el buffer
             int bytesRead;
-            // Desde donde indique el offser va leyendo el buffer
+            // Desde donde indique el offset
             int offset = 0;
 
+            // En cada iteracción del bucle se leen [32 bytes]
             do {
-                // Añadimos en bytesRead lo que lee el buffer [32 bytes]
+                // bytesRead -> se añaden los bytes leidos
                 bytesRead = fis.read(buffer);
-                // Lo presentamos con un formato %5d -> son 5 enteros
+
+                // Imprime el valor de desplazamiento offset [0, 32, 64 ...]
+                // Formato de 5 digitos
                 ps.format("[%5d] ", offset);
 
-                // Hacemos un bucle con los bytes leidos
+                // Bucle para mostrar los bytes
                 for (int i = 0; i < bytesRead; i++) {
-                    // Lo formateamos para que salga en formatado hexadecimal
+                    // Formato Hexadecimal
                     ps.format(" %2x", buffer[i]);
                 }
-                // Añadimos los bytes leidos al offset para leer los siguientes 32 bytes
+                // Actualizamos la posicion sumandole bytesRead [32 bytes]
                 offset += bytesRead;
                 // Salto de línea
                 ps.println();
+                // El tope de bytes para leer en este caso son 2048 bytes
+                // Para hacerlo de forma correcta bytesRead y maxOffset deberian ser constante
             } while (bytesRead == 32 && offset < 2048);
-
         } catch (IOException io) {
             System.out.println("Error en la E/S: " + io.getMessage());
         }
