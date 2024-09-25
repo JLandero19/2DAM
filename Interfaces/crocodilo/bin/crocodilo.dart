@@ -1,9 +1,7 @@
 // import 'package:crocodilo/crocodilo.dart' as crocodilo;
 import 'dart:io';
 
-import 'package:crocodilo/crocodilo.dart';
-
-// import '../lib/crocodilo.dart';
+import '../lib/crocodilo.dart';
 
 void main(List<String> arguments) {
   
