@@ -1,0 +1,3 @@
+Esto es un fichero de texto
+Estamos construyendo con un flujo con Buffer
+Esta cadena puede machacar lo anterior
