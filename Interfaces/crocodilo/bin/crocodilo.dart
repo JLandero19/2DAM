@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:crocodilo/crocodilo.dart';
 
+// import '../lib/crocodilo.dart';
+
 void main(List<String> arguments) {
   
   List<Crocodilo> listCrocodilo = [];
