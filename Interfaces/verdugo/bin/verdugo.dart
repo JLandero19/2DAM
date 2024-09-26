@@ -8,11 +8,11 @@
 // 6. Parámetros de entrada de métodos/funciones nombrados y opcionales. 
 
 // Jugador y Verdugo (Quién propone la palabra secreta)
-import 'package:verdugo/player.dart';
+import '../lib/player.dart';
 
 void main(List<String> arguments) {
   // Empezamos el juego
-  var play = Player();
+  Player play = Player();
   // Se continua el juego hasta terminar la partida
   play.continueGame();
 }
