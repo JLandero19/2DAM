@@ -6,6 +6,13 @@ fun main(args: Array<String>) {
 
     //basics()
 
+    //medium()
+
+    var myCar = Car();
+
+}
+
+fun medium() {
     // Argumentos de entrada al main
 //    args.forEach {
 //        print("$it, ")
@@ -53,6 +60,22 @@ fun main(args: Array<String>) {
 
     print(fishFood(randomDay()))
 
+    var dirtyLevel = 20
+    // Primera versión
+    //val waterFilter = { dirty : Int -> dirty / 2}
+    // Segunda versión
+    val waterFilter: (Int) -> Int = { dirty -> dirty / 2 }
+    println(waterFilter(dirtyLevel))
+
+    println(updateDirty(30, waterFilter))
+
+    println(updateDirty(15, ::increaseDirty))
+}
+
+fun increaseDirty( start: Int ) = start + 1
+
+fun updateDirty(dirty: Int, operation: (Int) -> Int): Int {
+    return operation(dirty)
 }
 
 fun fishFood (day : String) : String {
