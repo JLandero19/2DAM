@@ -1,8 +1,14 @@
-import 'package:verdugo/verdugo.dart';
-import 'package:test/test.dart';
+// import 'package:verdugo/game.dart';
+// import 'package:verdugo/player.dart';
 
 void main() {
-  test('calculate', () {
-    expect(calculate(), 42);
-  });
+  // Game game = Game();
+  // game.insertWordSecret();
+  // print("Palabra introducida.");
+  // game.getSecretWord();
+
+  // Player player = Player();
+  // player.insertKeyboard();
+
+  // print(game.compareLetters(player.getUserWord()));
 }

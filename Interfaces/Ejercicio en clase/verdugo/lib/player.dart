@@ -1,16 +1,14 @@
 import 'dart:io';
 
 class Player {
-  String userWord = "";
+  static String userWord = "";
 
-  void readKeyboard () {
-    print("Introduce tu intento de palabra");
-    String word = stdin.readLineSync()!;
-    userWord = word;
+  void insertKeyboard() {
+    userWord = stdin.readLineSync()!;
   }
 
-  String secretWord() {
+  String getUserWord() {
     return userWord;
   }
-
+  
 }

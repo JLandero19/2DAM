@@ -1,27 +1,61 @@
-
 import 'dart:io';
 
 class Game {
   static String secretWord = "";
+  List<String> letterList = [];
+  Set<String> setLetter = {};  
+
   int countTry = 7;
+
+  // Game(secretWord);
   
-  Game(secretWord);
+  // Game.maxTrys(secretWord, this.countTry);
 
-  Game.maxTry(secretWord, [this.countTry = 7]);
-
-  static void insertWord() {
-    print("Introduce tu palabra secreta");
-    String? word = stdin.readLineSync();
-    secretWord = word!;
+  bool findWord(String word) {
+    return true;
   }
 
-  static String getSecretWord() {
+  void insertWordSecret() {
+    secretWord = stdin.readLineSync()!;
+  }
+
+  String getSecretWord() {
     return secretWord;
   }
 
-  static compareLetter(String userWord) {
-    for (var i = 0; i < secretWord.length; i++) {
-      
+  String compareLetters(String userWord) {
+    int numLetter = getNumLetters();
+    int count = 0;
+    String result = "COLGADO";
+    for (var i = 0; i < userWord.length; i++) {
+      if (letterList.contains(userWord[i])) {
+        letterList.add(userWord[i]);
+      }
     }
+
+    for (var l in letterList) {
+      if (!secretWord.contains(l)) {
+        countTry--;
+        if (countTry <= 0) {
+          result = "AHORCADO";
+          break;
+        }
+      } else {
+        count++;
+        if (count == numLetter) {
+          result = "SALVADO";
+          break;
+        }
+      }
+    }
+    return result;
   }
+
+  int getNumLetters() {
+    for (var i = 0; i < secretWord.length; i++) {
+      setLetter.add(secretWord[i]);
+    }
+    return setLetter.length;
+  }
+
 }
