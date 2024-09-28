@@ -13,8 +13,7 @@ void main(List<String> arguments) {
   // Instancia el Player
   Player player = Player();
 
-  
-  while (game.result == "COLGANDO" || game.countTry <= 0 || player.getUserWord() != ".") {
+  do {
     // Inserta palabra del Player
     print("Intenta encontrar la palabra secreta");
     player.insertKeyboard();
@@ -24,5 +23,5 @@ void main(List<String> arguments) {
     
     // Mostrar número de intentos
     print("Número de intentos restantes: ${game.countTry}");
-  }  
+  } while (game.result == "COLGANDO" && game.countTry > 0 && player.getUserWord() != ".");
 }
