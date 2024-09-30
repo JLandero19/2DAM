@@ -8,7 +8,7 @@ void main(List<String> arguments) {
   // Elige palabra secreta
   print("Introduce palabra secreta");
   game.insertWordSecret();
-  print("Palabra introducida es: ${game.getSecretWord()}");
+  print("Palabra secreta introducida es: ${game.getSecretWord()}");
 
   // Instancia el Player
   Player player = Player();

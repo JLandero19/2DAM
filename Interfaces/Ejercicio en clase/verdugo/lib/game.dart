@@ -14,14 +14,6 @@ class Game {
 
   String result = "COLGANDO";
 
-  // Game(secretWord);
-  
-  // Game.maxTrys(secretWord, this.countTry);
-
-  bool findWord(String word) {
-    return true;
-  }
-
   // Insertar palabra secreta
   void insertWordSecret() {
     secretWord = stdin.readLineSync()!;
