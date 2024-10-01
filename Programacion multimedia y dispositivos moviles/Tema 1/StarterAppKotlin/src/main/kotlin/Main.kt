@@ -8,7 +8,31 @@ fun main(args: Array<String>) {
 
     //medium()
 
-    var myCar = Car();
+    // Ejemplo:
+    // var engine1 = Car.Engine(3000)
+    // var myCar = Car("Dodge", "Challenger", 2023, engine1)
+
+    // Aqui llamamos al objeto Engine dentro del objeto Car
+    var myCar = Car("Dodge", "Challenger", 2023, Car.Engine(3000))
+    val insurance1 = myCar.Insurance(InsuranceCarrier.MAPFRE, 500f)
+
+    println(myCar.toString())
+    println(insurance1.toString())
+
+    //Simulamos una operaciones de red y procesamos los resultados
+//    do {
+//        val result = fetchDataFromNetwork()
+//        handleNetworkResult(result)
+//    } while (result is NetworkResult.Loading)
+
+    val designer1 = Designer("Javier", 26)
+    designer1.introducePerson()
+
+    val programmer = Programmer("Javier", 26, ProgrammingLang.PHP)
+    // No tiene programas creados
+    programmer.showPrograms()
+    programmer.createProgram("Protectora de animales Love4Pets")
+    programmer.showPrograms()
 
 }
 
