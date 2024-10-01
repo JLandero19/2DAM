@@ -1,8 +1,6 @@
 package org.example;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -124,8 +122,35 @@ public class BDFichero {
 
         } catch (IOException io) {
             System.out.println("ERROR E/S: " + io.getMessage());
+        } finally {
+            return result;
         }
-        return result;
+    }
+
+    public long insertar(HashMap<String,String> reg) throws IOException{
+        String valorCampoClave = reg.get(this.campoClave);
+        if (recuperar(valorCampoClave) != null){//Comprobamos si ya existe un registro con el mismo valor para el campo clave que el queremos insertar (No está permitido)
+            return -1;
+        }
+
+        try(FileOutputStream fos = new FileOutputStream(nombreFich, true)){
+            for (Map.Entry<String,Integer> campo: campos.entrySet()) {
+                int longCampo = campo.getValue();
+                String valorCampo = reg.get(campo.getKey());
+                if (valorCampo == null){
+                    valorCampo = "";
+                }
+
+                String valorCampoForm = String.format("%1$-" + longCampo + "s", valorCampo); //devuelve el valor del 1er argumento en un String con longitud "longCampo" y alineado a la izquierda (gracias al uso de "-")
+                fos.write(valorCampoForm.getBytes("UTF-8"), 0, longCampo);
+            }
+        }catch (IOException e){
+            System.out.println("Error de E/S: " + e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        this.numReg++;
+        return this.numReg-1;
     }
 
 }
