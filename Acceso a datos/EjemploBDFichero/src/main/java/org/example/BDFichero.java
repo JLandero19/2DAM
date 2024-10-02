@@ -44,7 +44,8 @@ public class BDFichero {
         // Realizamos las comprobaciones previas
         if (f.exists()) {
             // Con esto conseguimos el número de registros
-            // f.length() -> sacamos lo que ocupa el fichero
+            // f.length() -> sacamos lo que ocupa el fichero en total
+            // f.length() / longReg -> conseguimos la cantidad de registros que hay en el fichero
             this.numReg = f.length() / longReg;
         } else {
             f.createNewFile();
