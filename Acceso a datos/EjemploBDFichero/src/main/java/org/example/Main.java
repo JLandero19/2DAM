@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
+
         Map<String, Integer> fields = new HashMap<>();
         fields.put("id", 11);
         fields.put("nombre", 32);
@@ -14,37 +15,37 @@ public class Main {
         try {
             BDFichero bdFichero = new BDFichero("bdanimales.dat", fields, "id");
 
-            HashMap<String, String> animal = new HashMap<>();
-            animal.put("id", "1");
-            animal.put("nombre", "Nieve");
-            animal.put("raza", "Podenco Andaluz");
+            HashMap<String, String> animales = new HashMap<>();
+            animales.put("id", "1");
+            animales.put("nombre", "Nieve");
+            animales.put("raza", "Podenco Andaluz");
 
             // insertamos
-            bdFichero.insertar(animal);
-            animal.clear();
+            bdFichero.insertar(animales);
+            animales.clear();
 
-            animal.put("id", "2");
-            animal.put("nombre", "Rocky");
-            animal.put("raza", "Husky");
-
-            // insertamos
-            bdFichero.insertar(animal);
-            animal.clear();
-
-            animal.put("id", "3");
-            animal.put("nombre", "Jimmy");
-            animal.put("raza", "Siba Inu");
+            animales.put("id", "2");
+            animales.put("nombre", "Rocky");
+            animales.put("raza", "Husky");
 
             // insertamos
-            bdFichero.insertar(animal);
-            animal.clear();
+            bdFichero.insertar(animales);
+            animales.clear();
+
+            animales.put("id", "3");
+            animales.put("nombre", "Jimmy");
+            animales.put("raza", "Siba Inu");
+
+            // insertamos
+            bdFichero.insertar(animales);
+            animales.clear();
 
             // Aqui es donde falla, cuando termina la ejecución del metodo recuperar devuelve null
-            animal = (HashMap<String, String>) bdFichero.recuperar("2");
-            System.out.println(animal);
-//            for (Map.Entry<String, String> data : animal.entrySet()) {
-//                System.out.println(data.getKey() + ": " + data.getValue());
-//            }
+            animales = (HashMap<String, String>) bdFichero.recuperar("2");
+
+            for (Map.Entry<String, String> animal : animales.entrySet()) {
+                System.out.println(animal.getKey() + ": " + animal.getValue());
+            }
 
         } catch (IOException io) {
             System.out.println("Exception de E/S: " + io.getMessage());
@@ -56,7 +57,7 @@ public class Main {
 //        fields.put("matricula", 7);
 //        fields.put("marca", 32);
 //        fields.put("modelo", 32);
-
+//
 //        try {
 //            BDFichero bdFichero = new BDFichero("bdcoches.dat", fields, "matricula");
 //
@@ -92,8 +93,7 @@ public class Main {
 //            coche.clear();
 //
 //            //coche = (HashMap<String, String>) bdFichero.recuperar("2222BBB");
-//            coche = (HashMap<String, String>) bdFichero.recuperar("3333BBB");
-//
+//            coche = (HashMap<String, String>) bdFichero.recuperar("2222BBB");
 //            for (Map.Entry<String, String> data : coche.entrySet()) {
 //                System.out.println(data.getKey() + ": " + data.getValue());
 //            }

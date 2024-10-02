@@ -108,7 +108,9 @@ public class BDFichero {
                     }
                     offsetCampo += longCampo;
                 }
-                if (valorClave.equals(unValorClave)) {
+                // unValorClave -> si el PRIMARY KEY que sacamos del fichero tiene espacios el .equals lo considera diferente
+                // por lo tanto para evitar ese problema le quitamos los espacios que queden por detrás con .trim()
+                if (valorClave.equals(unValorClave.trim())) {
                     encontrado = true;
                     offsetCampo = 0;
                     result = new HashMap<String,String>();
