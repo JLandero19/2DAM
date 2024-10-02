@@ -127,9 +127,10 @@ public class BDFichero {
         }
     }
 
-    public long insertar(HashMap<String,String> reg) throws IOException{
+    public long insertar(HashMap<String,String> reg) throws IOException {
         String valorCampoClave = reg.get(this.campoClave);
         if (recuperar(valorCampoClave) != null){//Comprobamos si ya existe un registro con el mismo valor para el campo clave que el queremos insertar (No está permitido)
+            System.err.println("No se puede insertar el registro debido a que ya existe uno con esta clave primaria: " + valorCampoClave);
             return -1;
         }
 
@@ -140,8 +141,14 @@ public class BDFichero {
                 if (valorCampo == null){
                     valorCampo = "";
                 }
-
+                // %1$ -> el primer parametro que le pasamos
+                // - -> alineación a la izquierda
+                // longCampo -> ejemplo 32, tiene que rellenar con espacio hasta 32 bytes
+                // s -> indica que es String
                 String valorCampoForm = String.format("%1$-" + longCampo + "s", valorCampo); //devuelve el valor del 1er argumento en un String con longitud "longCampo" y alineado a la izquierda (gracias al uso de "-")
+                // Se formatea con UTF-8
+                // El offset es 0, porque [valorCampoForm] está rellenando los campos con espacios
+                // longCampo -> en este caso necesita la longitud del campo
                 fos.write(valorCampoForm.getBytes("UTF-8"), 0, longCampo);
             }
         }catch (IOException e){
