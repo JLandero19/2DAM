@@ -4,7 +4,10 @@ class Persona {
   Persona(this.nombre, [this.edad]);
 
   void presentacion() {
-    print("Mi llamo $nombre y ${ (edad != null) ? "tengo $edad años" : "no he proporcionado mi edad." } ");
+    edad = edad ?? -1;
+    print("Mi llamo $nombre y ${ (edad! > 0) ? "tengo $edad años" : "no he proporcionado mi edad." } ");
+
+    // print("Me llamo $nombre y ${ ((edad ?? "no he proporcionado mi edad.") != null) ? "tengo $edad años" : "" }");
   }
 }
 

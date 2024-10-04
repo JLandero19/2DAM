@@ -1,8 +1,9 @@
 List<String> filtrarLista(List<String?> lista) {
   List<String> list = [];
   for (var element in lista) {
-    if (element != null) {
-      list.add(element);
+    String? valor = element ?? "";
+    if (valor != "") {
+      list.add(valor);
     }
   }
   list.isEmpty ? list.add('No hay datos') : list;

@@ -1,10 +1,8 @@
 int? buscarElemento(List<int> lista, int numero) {
-  int? indice;
-  for (var i = 0; i < lista.length; i++) {
-    if (lista[i] == numero) {
-      indice = i;
-    }
-  }
+  // Sacamos el indice si lo encuentra, si no lo encuentra indice = -1
+  int? indice = lista.indexOf(numero);
+  // Si indice es >= 0 contiene indice en el caso contrario será null (para poder utilizar null safety)
+  indice = (indice >= 0) ? indice : null;
 
   return indice;
 }
@@ -12,15 +10,17 @@ int? buscarElemento(List<int> lista, int numero) {
 String obtenerResultado(List<int> lista, int numero) {
   int? indice = buscarElemento(lista, numero);
   String result = "";
+  indice = indice ?? -1;
 
-  indice = indice;
+  // Opción comprimida
+  result = (indice >= 0) ? "El número está en el índice $indice" : "Elemento no encontrado";
 
-  if (indice != null) {
-    result = "El número está en el índice $indice";
-  } else {
-    result = "Elemento no encontrado";
-  }
-
+  // Opción estándar
+  // if (indice >= 0) {
+  //   result = "El número está en el índice $indice";
+  // } else {
+  //   result = "Elemento no encontrado";
+  // }
 
   return result;
 }

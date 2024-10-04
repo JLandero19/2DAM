@@ -1,12 +1,10 @@
 // Ejercicio 2
 double sumaPrecios(Map<String, double?> productos) {
-  var sumatorio = 0.0;
+  double? sumatorio;
   for (var element in productos.values) {
-    if (element != null) {
-      sumatorio += element;
-    }
+    sumatorio = (element ?? 0)!;    
   }
-  return sumatorio;
+  return sumatorio!;
 }
 
 void main(List<String> args) {
