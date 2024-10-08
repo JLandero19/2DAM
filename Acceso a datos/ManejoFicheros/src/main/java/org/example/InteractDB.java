@@ -1,9 +1,7 @@
 package org.example;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,8 +77,8 @@ public class InteractDB {
     }
 
     // Este metodo devuelve todos los registros en una lista de objetos de Car
-    public List<Car> queryAll() {
-        List<Car> result = new ArrayList<Car>();
+    public ArrayList<Car> queryAll() {
+        ArrayList<Car> result = new ArrayList<Car>();
         // Declarar una variable BufferedReader
         BufferedReader br = null;
         try {
@@ -88,11 +86,18 @@ public class InteractDB {
             br = new BufferedReader(new FileReader(this.nameFile));
             // Leer la primera línea, guardando en un String
             String text = br.readLine();
+
+            // Repetimos está línea para que se olvide de la primera línea que sería Matricula, Marca, Modelo
+            text = br.readLine();
+
             // Repetir mientras no se llegue al final del fichero
             while(text != null) {
                 // Hacer lo que sea con la línea leída
                 // En este ejemplo sólo se muestra por consola
-                System.out.println(text);
+                // System.out.println(text);
+
+                result.add(new Car(text.split(",")[0], text.split(",")[1], text.split(",")[2]));
+
                 // Leer la siguiente línea
                 text = br.readLine();
             }
@@ -106,9 +111,9 @@ public class InteractDB {
         } catch(Exception ex) {
             System.out.println("Error: Lectura del fichero");
             ex.printStackTrace();
-        }
+
         // Asegurar el cierre del fichero en cualquier caso
-        finally {
+        } finally  {
             try {
                 // Cerrar el fichero si se ha podido abrir
                 if(br != null) {
