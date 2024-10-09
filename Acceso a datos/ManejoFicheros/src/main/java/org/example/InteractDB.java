@@ -59,12 +59,6 @@ public class InteractDB {
         // Utiliza LinkedHashMap porque me guarda el orden de inserción
         LinkedHashMap<String, String> result = null;
 
-        try {
-            updateNumReg();
-        } catch (IOException e) {
-            System.out.println("ERROR: Fichero no encontrado" + e.getMessage());
-        }
-
         try (FileInputStream fis = new FileInputStream(this.nameFile)) {
 
             while (pos < this.numReg) {
@@ -79,11 +73,13 @@ public class InteractDB {
                 int offsetField = 0;
                 result = new LinkedHashMap<String, String>();
 
+                // Aquí creamos la lista result
                 for (Map.Entry<String, Integer> field : this.fields.entrySet()) {
                     result.put(field.getKey(), new String(buffer, offsetField, field.getValue(), StandardCharsets.UTF_8));
                     offsetField += field.getValue();
                 }
 
+                // Si result no está nulo se ejecuta lo siguiente
                 if (result != null) {
                     // Creamos un nuevo objeto Coche
                     Car newCar = new Car(result.get("matricula").trim(), result.get("marca").trim(), result.get("modelo").trim());
@@ -119,60 +115,61 @@ public class InteractDB {
         return result;
     }
 
-    public ArrayList<Car> insertPosition(Car car, int position) {
-        ArrayList<Car> cars = new ArrayList<>();
-        ArrayList<Car> result = new ArrayList<>();
-        cars = queryAll();
-        //position--;
-
-        // Preguntar si tenemos que tener en cuenta que el usuario no tiene en cuenta
-        // que la 1º posición es 0
-        if (position >= 0 && position < cars.size()) {
-            for (int i = 0; i < cars.size(); i++) {
-                if (i == position) {
-                    result.add(car);
-                    i--;
-                } else {
-                    result.add(car);
-                }
-            }
-            System.out.println("Se ha insertado el coche exitosamente");
-        } else {
-            System.err.println("Error: Insercción inválida, comprueba que la posición elegida es correcta.");
+    public boolean insertPosition(Car car, int position) throws FileNotFoundException {
+        Car searchCar = null;
+        searchCar = queryWhereID(car.matricula);
+        System.out.println(this.nameFile);
+        if (searchCar != null) {
+            System.err.println("ERROR: Ya existe un coche con la matricula" + car.matricula);
+            return false;
         }
-        return result;
+
+        ArrayList<Car> cars = queryAll();
+        ArrayList<Car> newCars = new ArrayList<>();
+        // Borramos el fichero
+        File fileData = new File(this.nameFile);
+        fileData.delete();
+
+        for (int i = 0; i < cars.size(); i++) {
+            if (i == (position-1)) {
+                newCars.add(car);
+            }
+            newCars.add(cars.get(i));
+        }
+        // Utilizamos el metodo para crear el nuevo fichero
+        importFile(newCars);
+        return true;
     }
 
     // Importa el archivo .csv que tenga los campos [Matricula, Marca, Modelo]
-    public void importFile(String nameFile) {
+    public void importFile(ArrayList<Car> cars) {
         // Agregamos a un Array los registros del archivo .csv
-        ArrayList<Car> cars = importFileCSVToArrayList(nameFile);
-        // longMatricula -> La longitud del campo matricula
-        int longMatricula = Car.bytesMatricula;
-        // longMarca -> La longitud del campo marca
-        int longMarca = Car.bytesMarca;
-        // longModelo -> La longitud del campo modelo
-        int longModelo = Car.bytesModelo;
-
         try (FileOutputStream fos = new FileOutputStream(this.nameFile, true)) {
             for (Car car : cars) {
                 // %1$ -> el primer parametro que le pasamos
                 // - -> alineación a la izquierda
                 // s -> indica que es String
-                String dataMatricula = String.format("%1$-" + longMatricula + "s", car.matricula); //devuelve el valor del 1er argumento en un String con longitud "longCampo" y alineado a la izquierda (gracias al uso de "-")
+                String dataMatricula = String.format("%1$-" + Car.bytesMatricula + "s", car.matricula); //devuelve el valor del 1er argumento en un String con longitud "longCampo" y alineado a la izquierda (gracias al uso de "-")
 
                 // Se formatea con UTF-8
                 // El offset es 0, porque [valorCampoForm] está rellenando los campos con espacios
-                fos.write(dataMatricula.getBytes("UTF-8"), 0, longMatricula);
+                fos.write(dataMatricula.getBytes("UTF-8"), 0, Car.bytesMatricula);
 
                 // Repetimos con el resto
-                String dataMarca = String.format("%1$-" + longMarca + "s", car.marca);
-                fos.write(dataMarca.getBytes("UTF-8"), 0, longMarca);
+                String dataMarca = String.format("%1$-" + Car.bytesMarca + "s", car.marca);
+                fos.write(dataMarca.getBytes("UTF-8"), 0, Car.bytesMarca);
 
-                String dataModelo = String.format("%1$-" + longModelo + "s", car.modelo);
-                fos.write(dataModelo.getBytes("UTF-8"), 0, longModelo);
+                String dataModelo = String.format("%1$-" + Car.bytesModelo + "s", car.modelo);
+                fos.write(dataModelo.getBytes("UTF-8"), 0, Car.bytesModelo);
             }
-            System.out.println("Se ha importado el archivo exitosamente.");
+            File fileDAT = new File(this.nameFile);
+            if (fileDAT.length() > 0) {
+                System.out.println("Se ha importado el archivo exitosamente.");
+                updateNumReg();
+            } else {
+                System.err.println("ERROR: No se ha importado el archivo o el archivo importado está vacío.");
+            }
+
         } catch (IOException e) {
             System.err.println("Error: Fichero no encontrado" + e.getMessage());
         } catch (Exception e) {

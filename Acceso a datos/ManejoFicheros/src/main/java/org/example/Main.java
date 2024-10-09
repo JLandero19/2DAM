@@ -25,16 +25,17 @@ public class Main {
              * que tengan la estructura de Matricula,Marca,Modelo
              */
             // Importación del archivo
-            //car.importFile("BBDD_Coches.csv");
+//            ArrayList<Car> cars = car.importFileCSVToArrayList("BBDD_Coches.csv");
+//            car.importFile(cars);
 
             // Insercción
             Car newCar = new Car("3215FFF", "Dodge", "Challenger");
             car.insertPosition(newCar, 2);
 
             // Lectura
-            ArrayList<Car> cars = car.queryAll();
-            if (cars != null) {
-                for (Car dataCar : cars) {
+            ArrayList<Car> newCars = car.queryAll();
+            if (newCars != null) {
+                for (Car dataCar : newCars) {
                     System.out.println(dataCar.toString());
                 }
             }
