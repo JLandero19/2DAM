@@ -1,17 +1,25 @@
 package org.example;
 
+import com.sun.istack.internal.Nullable;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class InteractDB {
     // Es una constante que le añadimos el valor al llamar el constructor
     private final String nameFile = "BBDD_Coches.dat";
 
     // Este mapa contiene -> ["nombre del campo", Tamaño Bytes]
-    private final Map<String, Integer> fields;
+    private final LinkedHashMap<String, Integer> fields = new LinkedHashMap<String, Integer>() {{
+        put("matricula", 7);
+        put("marca", 32);
+        put("modelo", 32);
+    }};
+
+    public Integer getTotalBytes() {
+        return this.fields.get("matricula") + this.fields.get("marca") + this.fields.get("modelo");
+    }
 
     // Clave Primaria de la tabla
     private final String primaryKey;
@@ -22,8 +30,7 @@ public class InteractDB {
     // Número de registros
     private long numReg;
 
-    public InteractDB(Map<String, Integer> fields, String primaryKey) throws IOException {
-        this.fields = fields;
+    public InteractDB(String primaryKey) throws IOException {
         this.primaryKey = primaryKey;
         this.numReg = 0;
 
@@ -38,7 +45,7 @@ public class InteractDB {
 
     public void updateNumReg() throws IOException {
         // Creamos la referencia al fichero
-        File f = new File(nameFile);
+        File f = new File(this.nameFile);
 
         // Realizamos las comprobaciones previas
         if (f.exists()) {
@@ -115,59 +122,31 @@ public class InteractDB {
         return result;
     }
 
-    public boolean insertPosition(Car car, int position) throws FileNotFoundException {
-        Car searchCar = null;
-        searchCar = queryWhereID(car.matricula);
-        System.out.println(this.nameFile);
-        if (searchCar != null) {
-            System.err.println("ERROR: Ya existe un coche con la matricula" + car.matricula);
-            return false;
-        }
-
-        ArrayList<Car> cars = queryAll();
-        ArrayList<Car> newCars = new ArrayList<>();
-        // Borramos el fichero
-        File fileData = new File(this.nameFile);
-        fileData.delete();
-
-        for (int i = 0; i < cars.size(); i++) {
-            if (i == (position-1)) {
-                newCars.add(car);
-            }
-            newCars.add(cars.get(i));
-        }
-        // Utilizamos el metodo para crear el nuevo fichero
-        importFile(newCars);
-        return true;
-    }
-
     // Importa el archivo .csv que tenga los campos [Matricula, Marca, Modelo]
-    public void importFile(ArrayList<Car> cars) {
+    public boolean importFile(String nameFile,ArrayList<Car> cars) {
         // Agregamos a un Array los registros del archivo .csv
-        try (FileOutputStream fos = new FileOutputStream(this.nameFile, true)) {
+        try (FileOutputStream fos = new FileOutputStream(nameFile, true)) {
             for (Car car : cars) {
                 // %1$ -> el primer parametro que le pasamos
                 // - -> alineación a la izquierda
                 // s -> indica que es String
-                String dataMatricula = String.format("%1$-" + Car.bytesMatricula + "s", car.matricula); //devuelve el valor del 1er argumento en un String con longitud "longCampo" y alineado a la izquierda (gracias al uso de "-")
+                String dataMatricula = String.format("%1$-" + this.fields.get("matricula") + "s", car.matricula); //devuelve el valor del 1er argumento en un String con longitud "longCampo" y alineado a la izquierda (gracias al uso de "-")
 
                 // Se formatea con UTF-8
                 // El offset es 0, porque [valorCampoForm] está rellenando los campos con espacios
-                fos.write(dataMatricula.getBytes("UTF-8"), 0, Car.bytesMatricula);
+                fos.write(dataMatricula.getBytes("UTF-8"), 0, this.fields.get("matricula"));
 
                 // Repetimos con el resto
-                String dataMarca = String.format("%1$-" + Car.bytesMarca + "s", car.marca);
-                fos.write(dataMarca.getBytes("UTF-8"), 0, Car.bytesMarca);
+                String dataMarca = String.format("%1$-" + this.fields.get("marca") + "s", car.marca);
+                fos.write(dataMarca.getBytes("UTF-8"), 0, this.fields.get("marca"));
 
-                String dataModelo = String.format("%1$-" + Car.bytesModelo + "s", car.modelo);
-                fos.write(dataModelo.getBytes("UTF-8"), 0, Car.bytesModelo);
+                String dataModelo = String.format("%1$-" + this.fields.get("modelo") + "s", car.modelo);
+                fos.write(dataModelo.getBytes("UTF-8"), 0, this.fields.get("modelo"));
             }
             File fileDAT = new File(this.nameFile);
             if (fileDAT.length() > 0) {
-                System.out.println("Se ha importado el archivo exitosamente.");
                 updateNumReg();
-            } else {
-                System.err.println("ERROR: No se ha importado el archivo o el archivo importado está vacío.");
+                return true;
             }
 
         } catch (IOException e) {
@@ -176,11 +155,12 @@ public class InteractDB {
             System.err.println("Error: Lectura del fichero");
             e.printStackTrace();
         }
+
+        return false;
     }
 
     // Este metodo devuelve todos los registros en una lista de objetos de Car
     // Recibe por parametro la ruta de un archivo .csv
-    // Este metodo lo usamos en importFile
     public ArrayList<Car> importFileCSVToArrayList(String nameFile) {
         ArrayList<Car> result = new ArrayList<Car>();
         // Declarar una variable BufferedReader
@@ -229,6 +209,103 @@ public class InteractDB {
             }
         }
         return result;
+    }
+
+    // Inserta los datos de 1 coche en una posición predeterminada entre 1-[numeroRegistro]
+    public boolean insertPosition(Car car, int position) throws IOException {
+        // Comprobamos que no haya un coche con la misma matricula
+        Car searchCar = null;
+        searchCar = queryWhereID(car.matricula);
+        if (searchCar != null) {
+            System.err.println("ERROR: Ya existe un coche con la matricula " + car.matricula);
+            return false;
+        }
+
+        // Creamos un ArrayList con los coches del Fichero.dat
+        ArrayList<Car> cars = queryAll();
+
+        // Por seguridad hacemos una copia por si da un ERROR más adelante
+        importFile("backup.dat",cars);
+
+        // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
+        ArrayList<Car> newCars = new ArrayList<>();
+
+        // Eliminamos el contenido del archivo
+        deleteAllContentFile(this.nameFile);
+
+        // Este nos permite introducir todos los coches dentro del ArrayList newCar
+        for (int i = 0; i < cars.size(); i++) {
+            // Si la posición es la buscamos entra el objeto que le metimos por parametros.
+            if (i == (position-1)) {
+                newCars.add(car);
+            }
+            newCars.add(cars.get(i));
+        }
+        // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
+        // ya que crea un fichero nuevo e introduce correctamente
+        boolean confirm = importFile(this.nameFile, newCars);
+
+        // Si confirm devuelve true muestra el mensaje exitoso
+        if (confirm) {
+            System.out.println("Se ha insertado el coche " + car.toString());
+            // Eliminamos el backup.dat cuando sabemos que se ha ejecutado exitosamente
+            File fileData = new File("backup.dat");
+            fileData.delete();
+            return true;
+        } else {
+            System.err.println("No se ha insertado el coche " + car.toString());
+            return false;
+        }
+    }
+
+    // Ordenar el fichero por el campo matricula
+    // Por defecto será Ascendente
+    public void orderFile(@Nullable String mode) {
+        // Creamos un ArrayList con los coches del Fichero.dat
+        ArrayList<Car> cars = queryAll();
+
+        // Por seguridad hacemos una copia por si da un ERROR más adelante
+        importFile("backup.dat",cars);
+
+        // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
+        Collections.sort(cars, new Comparator<Car>() {
+            @Override
+            public int compare(Car c1, Car c2) {
+                if (mode == "DESC" || mode == "desc") {
+                    // Versión descendente
+                    return new String(c2.matricula).compareTo(new String(c1.matricula));
+                }
+                // Versión ascendente
+                return new String(c1.matricula).compareTo(new String(c2.matricula));
+            }
+        });
+
+        // Eliminamos el contenido del archivo
+        deleteAllContentFile(this.nameFile);
+
+        // ya que crea un fichero nuevo e introduce correctamente
+        boolean confirm = importFile(this.nameFile, cars);
+
+        // Si confirm devuelve true muestra el mensaje exitoso
+        if (confirm) {
+            System.out.println("Se ha ordenado los datos de los coches exitosamente");
+            // Eliminamos el backup.dat cuando sabemos que se ha ejecutado exitosamente
+            File fileData = new File("backup.dat");
+            fileData.delete();
+        } else {
+            System.err.println("ERROR: No ha sido posible la ordenación de los datos");
+        }
+    }
+
+    public void deleteAllContentFile(String nameFile) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(nameFile));
+            bw.write("");
+            bw.close();
+
+        } catch (IOException e) {
+            System.err.println("Error: Fichero no encontrado");
+        }
     }
 
     // Metodos Getter y Setter

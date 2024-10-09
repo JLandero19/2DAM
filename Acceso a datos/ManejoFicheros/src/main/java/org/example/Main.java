@@ -1,23 +1,13 @@
 package org.example;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
 
-        LinkedHashMap<String, Integer> fields = new LinkedHashMap<>();
-
-        fields.put("matricula", 7);
-        fields.put("marca", 32);
-        fields.put("modelo", 32);
-
-        ArrayList<Car> carList = new ArrayList<Car>();
-
         try {
-            InteractDB car = new InteractDB(fields, "matricula");
+            InteractDB car = new InteractDB("matricula");
 
 
             /**
@@ -25,17 +15,30 @@ public class Main {
              * que tengan la estructura de Matricula,Marca,Modelo
              */
             // Importación del archivo
-//            ArrayList<Car> cars = car.importFileCSVToArrayList("BBDD_Coches.csv");
-//            car.importFile(cars);
+//            ArrayList<Car> carList = car.importFileCSVToArrayList("BBDD_Coches.csv");
+//            car.importFile("BBDD_Coches.dat", carList);
+//
+//            carList = car.queryAll();
+//            if (carList != null) {
+//                for (Car dataCar : carList) {
+//                    System.out.println(dataCar.toString());
+//                }
+//            }
 
             // Insercción
-            Car newCar = new Car("3215FFF", "Dodge", "Challenger");
-            car.insertPosition(newCar, 2);
+//            Car newCar = new Car("3215FFF", "Dodge", "Challenger");
+//            car.insertPosition(newCar, 3);
+
+            // Ordenación [ASC/DESC]
+            // null u ASC -> ordenación ascendente
+            // DESC -> ordenación descendente
+            car.orderFile(null);
 
             // Lectura
-            ArrayList<Car> newCars = car.queryAll();
-            if (newCars != null) {
-                for (Car dataCar : newCars) {
+            ArrayList<Car> carList2 = car.queryAll();
+
+            if (carList2 != null) {
+                for (Car dataCar : carList2) {
                     System.out.println(dataCar.toString());
                 }
             }
