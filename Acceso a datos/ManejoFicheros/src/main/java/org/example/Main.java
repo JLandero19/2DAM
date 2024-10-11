@@ -8,43 +8,61 @@ public class Main {
 
         try {
             InteractDB car = new InteractDB("matricula");
-
-
-            /**
-             * Preguntar al profe si el programa solo vale para los ficheros .csv
-             * que tengan la estructura de Matricula,Marca,Modelo
-             */
-            // Importación del archivo
-//            ArrayList<Car> carList = car.importFileCSVToArrayList("BBDD_Coches.csv");
-//            car.importFile("BBDD_Coches.dat", carList);
-//
-//            carList = car.queryAll();
-//            if (carList != null) {
-//                for (Car dataCar : carList) {
-//                    System.out.println(dataCar.toString());
-//                }
-//            }
-
-            // Insercción
-//            Car newCar = new Car("3215FFF", "Dodge", "Challenger");
-//            car.insertPosition(newCar, 3);
-
-            // Ordenación [ASC/DESC]
-            // null u ASC -> ordenación ascendente
-            // DESC -> ordenación descendente
-            car.orderFile(null);
-
-            // Lectura
-            ArrayList<Car> carList2 = car.queryAll();
-
-            if (carList2 != null) {
-                for (Car dataCar : carList2) {
-                    System.out.println(dataCar.toString());
+            int option = 0;
+            do {
+                /*
+                 * El Usuario no necesita hacer una importación de primera mano
+                 * El Usuario si elige Insertar tenemos que contemplar si existe o no el fichero
+                 * "" si elige Ordenación tenemos que contemplar si existe el fichero y si hay contenido
+                 * "" si elige Eliminación tenemos que contemplar si existe el fichero y si hay contenido antes de Eliminar
+                 * "" si elige Editar tenemos que contemplar si existe el fichero y si hay contenido antes de Eliminar
+                 * Mostrar el contenido de la Inserción/Edición/Eliminación y mostrar la lista de Coches en caso de Ordenación
+                 */
+                switch (option) {
+                    case 1:
+                        // Importación
+                        break;
+                    case 2:
+                        // Insertar un Registro
+                        break;
+                    case 3:
+                        // Ordenación
+                        break;
+                    case 4:
+                        // Eliminar un Registro
+                        break;
+                    case 5:
+                        // Editar un Registro
+                        break;
+                    default:
+                        // Importación
+                        break;
                 }
-            }
+
+            } while (option <= 0);
 
         } catch (IOException io) {
             System.err.println("Error: Fichero no encontrado" + io.getMessage());
         }
+    }
+
+    public void importDataBase() {
+
+    }
+
+    public void insertRegister() {
+
+    }
+
+    public void orderDataBase() {
+
+    }
+
+    public void deleteRegister() {
+
+    }
+
+    public void editRegister() {
+
     }
 }

@@ -13,6 +13,6 @@ public class Car {
 
     @Override
     public String toString() {
-        return matricula + " " + marca + " " + modelo;
+        return "Matricula: " + matricula + " Marca: " + marca + " Modelo: " + modelo;
     }
 }
