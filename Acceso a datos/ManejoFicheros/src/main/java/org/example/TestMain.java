@@ -13,34 +13,32 @@ public class TestMain {
              * Preguntar al profe si el programa solo vale para los ficheros .csv
              * que tengan la estructura de Matricula,Marca,Modelo
              */
-            // Importación del archivo
+            // Importación del archivo (Completa)
+            // La importación borra el contenido anterior que tenía el fichero
+            // Se le tiene informar al usuario
 //            ArrayList<Car> carList = car.importFileCSVToArrayList("BBDD_Coches.csv");
 //            car.importFile("BBDD_Coches.dat", carList);
+
+            // Insercción (Completa)
+//            Car newCar = new Car("3215DCL", "Dodge", "Challenger");
+//            car.insertPosition(newCar, "2");
 //
-//            carList = car.queryAll();
-//            if (carList != null) {
-//                for (Car dataCar : carList) {
-//                    System.out.println(dataCar.toString());
-//                }
-//            }
+//            newCar = new Car("3119CGR", "Dodge", "Charger");
+//            car.insertPosition(newCar, "1");
 
-            // Insercción
-//            Car newCar = new Car("3215FFF", "Dodge", "Challenger");
-//            car.insertPosition(newCar, 3);
-
-            // Ordenación [ASC/DESC]
+            // Ordenación [ASC/DESC] (Completa)
             // null u ASC -> ordenación ascendente
             // DESC -> ordenación descendente
-//            car.orderFile("desc");
+//            car.orderFile("asc");
 
-            // Eliminación
+            // Eliminación (Completado)
 //            car.delete("3215FFF");
 
-            // Modificación
-            car.edit("3215FFF","2","Challenger");
+            // Modificación (Completa)
+//            car.edit("3215FFF","2","Challenger");
 
 
-            // Lectura
+            // Lectura (Completa)
             ArrayList<Car> carList2 = car.queryAll();
 
             if (carList2 != null) {

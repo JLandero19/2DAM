@@ -39,7 +39,7 @@ public class InteractDB {
         updateNumReg();
     }
 
-    public void updateNumReg() throws IOException {
+    public boolean updateNumReg() throws IOException {
         // Creamos la referencia al fichero
         File f = new File(this.nameFile);
 
@@ -49,9 +49,19 @@ public class InteractDB {
             // f.length() -> sacamos lo que ocupa el fichero en total
             // f.length() / longReg -> conseguimos la cantidad de registros que hay en el fichero
             this.numReg = f.length() / longReg;
+            return true;
         } else {
             f.createNewFile();
+            return false;
         }
+    }
+
+    public static boolean existsFile(String nameFile) throws IOException {
+        File f = new File(nameFile);
+        if (f.exists()) {
+            return true;
+        }
+        return false;
     }
 
     // Este metodo es similar que importFileCSVToArrayList
@@ -92,7 +102,7 @@ public class InteractDB {
             }
 
         } catch (IOException io) {
-            System.err.println("Error: Fichero no encontrado" + io.getMessage());
+            System.err.println("ERROR Fichero no encontrado" + io.getMessage());
         }
         // Devolvemos la lista de coches, por defecto es NULL
         // Si hay coches en el archivo y no ha ocurrido ningún problema tendremos la lista completa.
@@ -111,7 +121,6 @@ public class InteractDB {
                 break;
             }
         }
-
         return result;
     }
 
@@ -119,6 +128,8 @@ public class InteractDB {
     public boolean importFile(String nameFile, ArrayList<Car> cars) {
         // Agregamos a un Array los registros del archivo .csv
         try (FileOutputStream fos = new FileOutputStream(nameFile, true)) {
+            // Borramos el contenido del archivo
+            deleteAllContentFile(nameFile);
             for (Car car : cars) {
                 // %1$ -> el primer parametro que le pasamos
                 // - -> alineación a la izquierda
@@ -145,9 +156,9 @@ public class InteractDB {
             }
 
         } catch (IOException e) {
-            System.err.println("Error: Fichero no encontrado" + e.getMessage());
+            System.err.println("ERROR Fichero no encontrado" + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Error: Lectura del fichero");
+            System.err.println("ERROR Lectura del fichero");
             e.printStackTrace();
         }
 
@@ -160,35 +171,39 @@ public class InteractDB {
         ArrayList<Car> result = new ArrayList<Car>();
         // Declarar una variable BufferedReader
         BufferedReader br = null;
+
         try {
-            // Crear un objeto BufferedReader al que se le pasa un objeto FileReader con el nombre del fichero
-            br = new BufferedReader(new FileReader(nameFile));
-            // Leer la primera línea, guardando en un String
-            String text = br.readLine();
+            if (existsFile(nameFile)) {
+                // Crear un objeto BufferedReader al que se le pasa un objeto FileReader con el nombre del fichero
+                br = new BufferedReader(new FileReader(nameFile));
+                // Leer la primera línea, guardando en un String
+                String text = br.readLine();
 
-            // Repetimos está línea para que se olvide de la primera línea que sería [Matricula, Marca, Modelo]
-            text = br.readLine();
-
-            // Repetir mientras no se llegue al final del fichero
-            while (text != null) {
-                // Hacer lo que sea con la línea leída
-                // En este ejemplo sólo se muestra por consola
-                // System.out.println(text);
-
-                result.add(new Car(text.split(",")[0], text.split(",")[1], text.split(",")[2]));
-
-                // Leer la siguiente línea
+                // Repetimos está línea para que se olvide de la primera línea que sería [Matricula, Marca, Modelo]
                 text = br.readLine();
-            }
 
-            // Captura de excepción por fichero no encontrado
+                // Repetir mientras no se llegue al final del fichero
+                while (text != null) {
+                    // Hacer lo que sea con la línea leída
+                    // En este ejemplo sólo se muestra por consola
+                    // System.out.println(text);
+
+                    result.add(new Car(text.split(",")[0], text.split(",")[1], text.split(",")[2]));
+
+                    // Leer la siguiente línea
+                    text = br.readLine();
+                }
+            } else {
+                System.err.println("ERROR Fichero no encontrado");
+            }
+        // Captura de excepción por fichero no encontrado
         } catch (FileNotFoundException ex) {
-            System.err.println("Error: Fichero no encontrado");
+            System.err.println("ERROR Fichero no encontrado");
             ex.printStackTrace();
 
-            // Captura de cualquier otra excepción
+        // Captura de cualquier otra excepción
         } catch (Exception ex) {
-            System.err.println("Error: Lectura del fichero");
+            System.err.println("ERROR Lectura del fichero");
             ex.printStackTrace();
 
             // Asegurar el cierre del fichero en cualquier caso
@@ -199,7 +214,7 @@ public class InteractDB {
                     br.close();
                 }
             } catch (Exception ex) {
-                System.err.println("Error: Cerrar el fichero");
+                System.err.println("ERROR Cerrar el fichero");
                 ex.printStackTrace();
             }
         }
@@ -207,20 +222,30 @@ public class InteractDB {
     }
 
     // Inserta los datos de 1 coche en una posición predeterminada entre 1-[numeroRegistro]
+    // El parametro position es un String porque le tenemos para una cadena de texto insertada por el usuario
+    // Se comprueba si es válida o no cuando se le pregunta la posición
     public boolean insertPosition(Car car, @Nullable String position) throws IOException {
+        // Los utilizamos para crear el archivo en el caso de que no exista
+        boolean existsFile = updateNumReg();
+        int positionInt = 0;
+        if (existsFile) {
+            if (position != null) {
+                // Aquí comprobamos si ha puesto alguna posición
+                if (isInteger(position)) {
+                    positionInt = Integer.parseInt(position);
+                } else {
+                    System.err.println("ERROR El posición introducida no es valido");
+                    return false;
+                }
+            }
+        }
+
         // Comprobamos que no haya un coche con la misma matricula
         Car searchCar = null;
         searchCar = queryWhereID(car.matricula);
-        if (searchCar != null) {
-            System.err.println("ERROR: Ya existe un coche con la matricula " + car.matricula);
-            return false;
-        }
 
-        int positionInt = 0;
-        if (isInteger(position)) {
-            positionInt = Integer.parseInt(position);
-        } else {
-            System.err.println("ERROR: El posición introducida no es valido");
+        if (searchCar != null) {
+            System.err.println("ERROR Ya existe un coche con la matricula " + car.matricula);
             return false;
         }
 
@@ -232,7 +257,8 @@ public class InteractDB {
 
         // Eliminamos el contenido del archivo
         deleteAllContentFile(this.nameFile);
-        if (position != null) {
+
+        if (position != null && !cars.isEmpty()) {
             // Este bucle nos permite introducir todos los coches dentro del ArrayList newCar
             for (int i = 0; i < cars.size(); i++) {
                 // Si la posición es la buscamos entra el objeto que le metimos por parametros.
@@ -258,7 +284,7 @@ public class InteractDB {
             // Eliminamos el contenido del archivo
             deleteAllContentFile(this.nameFile);
             importFile(this.nameFile, cars);
-            System.err.println("No se ha insertado el coche " + car.toString());
+            System.err.println("ERROR No se ha insertado el coche " + car.toString());
             return false;
         }
     }
@@ -267,129 +293,147 @@ public class InteractDB {
     // Por defecto será Ascendente
     public void orderFile(@Nullable String mode) {
         // Creamos un ArrayList con los coches del Fichero.dat
-        ArrayList<Car> cars = queryAll();
+        ArrayList<Car> oldCars = queryAll();
+        ArrayList<Car> cars = oldCars;
 
-        // Por seguridad hacemos una copia por si da un ERROR más adelante
-        importFile("backup.dat",cars);
-
-        // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
-        Collections.sort(cars, new Comparator<Car>() {
-            @Override
-            public int compare(Car c1, Car c2) {
-                if (mode == "DESC" || mode == "desc") {
-                    // Versión descendente
-                    return new String(c2.matricula).compareTo(new String(c1.matricula));
+        if (cars.size() > 1) {
+            // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
+            Collections.sort(cars, new Comparator<Car>() {
+                @Override
+                public int compare(Car c1, Car c2) {
+                    if (mode == "DESC" || mode == "desc") {
+                        // Versión descendente
+                        return new String(c2.matricula).compareTo(new String(c1.matricula));
+                    }
+                    // Versión ascendente
+                    return new String(c1.matricula).compareTo(new String(c2.matricula));
                 }
-                // Versión ascendente
-                return new String(c1.matricula).compareTo(new String(c2.matricula));
+            });
+
+            // Eliminamos el contenido del archivo
+            deleteAllContentFile(this.nameFile);
+
+            // ya que crea un fichero nuevo e introduce correctamente
+            boolean confirm = importFile(this.nameFile, cars);
+
+            // Si confirm devuelve true muestra el mensaje exitoso
+            if (confirm) {
+                System.out.println("Se ha ordenado los datos de los coches exitosamente");
+                // Eliminamos el backup.dat cuando sabemos que se ha ejecutado exitosamente
+            } else {
+                importFile(this.nameFile, oldCars);
+                System.err.println("ERROR No ha sido posible la ordenación de los datos");
             }
-        });
-
-        // Eliminamos el contenido del archivo
-        deleteAllContentFile(this.nameFile);
-
-        // ya que crea un fichero nuevo e introduce correctamente
-        boolean confirm = importFile(this.nameFile, cars);
-
-        // Si confirm devuelve true muestra el mensaje exitoso
-        if (confirm) {
-            System.out.println("Se ha ordenado los datos de los coches exitosamente");
-            // Eliminamos el backup.dat cuando sabemos que se ha ejecutado exitosamente
         } else {
-            importFile(this.nameFile, cars);
-            System.err.println("ERROR: No ha sido posible la ordenación de los datos");
+            System.out.println("Se ha ordenado los datos de los coches exitosamente");
         }
-        File fileData = new File("backup.dat");
-        fileData.delete();
     }
 
     public boolean delete(String matricula) throws IOException {
-        if (matricula.length() != 7) {
-            System.err.println("ERROR: Ha introducido una matricula no válida");
-            return false;
-        }
         // Creamos un ArrayList con los coches del Fichero.dat
         ArrayList<Car> cars = queryAll();
-        // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
-        ArrayList<Car> newCars = cars;
-        // Este bucle lo utilizamos para buscar el coche que queremos eliminar
-        for (Car car : cars) {
-            if (car.matricula.equals(matricula)) {
-                newCars.remove(car);
+
+        if (cars.size() >= 1) {
+            if (matricula.length() != 7) {
+                System.err.println("ERROR Ha introducido una matricula no válida");
+                return false;
             }
-        }
 
-        // Eliminamos el contenido del archivo
-        deleteAllContentFile(this.nameFile);
+            // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
+            ArrayList<Car> newCars = cars;
+            // Este bucle lo utilizamos para buscar el coche que queremos eliminar
+            for (Car car : cars) {
+                if (car.matricula.equals(matricula)) {
+                    newCars.remove(car);
+                }
+            }
 
-        // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
-        // ya que crea un fichero nuevo e introduce correctamente
-        boolean confirm = importFile(this.nameFile, newCars);
+            // Eliminamos el contenido del archivo
+            deleteAllContentFile(this.nameFile);
 
-        // Si confirm devuelve true muestra el mensaje exitoso
-        if (confirm) {
-            System.out.println("Se ha insertado el coche con matricula " + matricula);
-            return true;
+            // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
+            // ya que crea un fichero nuevo e introduce correctamente
+            boolean confirm = importFile(this.nameFile, newCars);
+
+            // Si confirm devuelve true muestra el mensaje exitoso
+            if (confirm) {
+                System.out.println("Se ha eliminado el coche con matricula " + matricula);
+                return true;
+            } else {
+                importFile(this.nameFile, cars);
+                System.err.println("No se ha podido eliminar el coche con matricula " + matricula);
+                return false;
+            }
         } else {
-            importFile(this.nameFile, cars);
-            System.err.println("No se ha podido eliminar el coche con matricula " + matricula);
+            System.out.println("No existe el registro especificado");
             return false;
         }
     }
 
     public boolean edit(String matricula, String field, String value) throws IOException {
-        if (matricula.length() != 7) {
-            System.err.println("ERROR: Ha introducido una matricula no válida");
-            return false;
-        }
-        int fieldInt = 0;
-        if (isInteger(field)) {
-            fieldInt = Integer.parseInt(field);
-        } else {
-            System.err.println("ERROR: El campo introducido no es valido");
-            return false;
-        }
 
         // Creamos un ArrayList con los coches del Fichero.dat
         ArrayList<Car> cars = queryAll();
-        // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
-        ArrayList<Car> newCars = cars;
-        // Este bucle lo utilizamos para buscar el coche que queremos eliminar
-        for (Car car : newCars) {
-            if (car.matricula.equals(matricula)) {
-                switch (fieldInt) {
-                    case 1:
-                        if (value.length() > fields.get("marca") || value.length() < 1) {
-                            System.err.println("ERROR: La marca introducida es invalida");
-                            return false;
-                        }
-                        car.marca = value;
-                        break;
-                    case 2:
-                        if (value.length() > fields.get("modelo") || value.length() < 1) {
-                            System.err.println("ERROR: La modelo introducida es invalida");
-                            return false;
-                        }
-                        car.modelo = value;
-                        break;
+
+        if (cars.size() >= 1) {
+            // Comprobamos que la matricula sea válida
+            if (matricula.length() != 7) {
+                System.err.println("ERROR Ha introducido una matricula no válida");
+                return false;
+            }
+            // Convertimos el número introducido por parámetro en un entero
+            int fieldInt = 0;
+            if (isInteger(field)) {
+                fieldInt = Integer.parseInt(field);
+            } else {
+                System.err.println("ERROR El campo introducido no es valido");
+                return false;
+            }
+
+            // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
+            ArrayList<Car> newCars = cars;
+            // Este bucle lo utilizamos para buscar el coche que queremos eliminar
+            for (Car car : newCars) {
+                if (car.matricula.equals(matricula)) {
+                    switch (fieldInt) {
+                        case 1: // 1 -> Campo Marca
+                            // Comprobamos que el VALOR nuevo tenga la longitud correcta
+                            if (value.length() > fields.get("marca") || value.length() < 1) {
+                                System.err.println("ERROR La marca introducida no es valida");
+                                return false;
+                            }
+                            car.marca = value;
+                            break;
+                        case 2: // 2 -> Campo Modelo
+                            // Comprobamos que el VALOR nuevo tenga la longitud correcta
+                            if (value.length() > fields.get("modelo") || value.length() < 1) {
+                                System.err.println("ERROR El modelo introducido no es valido");
+                                return false;
+                            }
+                            car.modelo = value;
+                            break;
+                    }
                 }
             }
-        }
 
-        // Eliminamos el contenido del archivo
-        deleteAllContentFile(this.nameFile);
+            // Eliminamos el contenido del archivo
+            deleteAllContentFile(this.nameFile);
 
-        // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
-        // ya que crea un fichero nuevo e introduce correctamente
-        boolean confirm = importFile(this.nameFile, newCars);
+            // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
+            // ya que crea un fichero nuevo e introduce correctamente
+            boolean confirm = importFile(this.nameFile, newCars);
 
-        // Si confirm devuelve true muestra el mensaje exitoso
-        if (confirm) {
-            System.out.println("Editado con exito el coche con matricula " + matricula);
-            return true;
+            // Si confirm devuelve true muestra el mensaje exitoso
+            if (confirm) {
+                System.out.println("Editado con exito el coche con matricula " + matricula);
+                return true;
+            } else {
+                importFile(this.nameFile, cars);
+                System.err.println("ERROR No se ha podido eliminar el coche con matricula " + matricula);
+                return false;
+            }
         } else {
-            importFile(this.nameFile, cars);
-            System.err.println("ERROR: No se ha podido eliminar el coche con matricula " + matricula);
+            System.out.println("No existe el registro especificado");
             return false;
         }
     }
@@ -401,7 +445,7 @@ public class InteractDB {
             bw.close();
 
         } catch (IOException e) {
-            System.err.println("Error: Fichero no encontrado");
+            System.err.println("ERROR Fichero no encontrado");
         }
     }
 
