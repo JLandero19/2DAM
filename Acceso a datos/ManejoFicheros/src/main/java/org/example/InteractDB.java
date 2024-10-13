@@ -130,6 +130,7 @@ public class InteractDB {
         try (FileOutputStream fos = new FileOutputStream(nameFile, true)) {
             // Borramos el contenido del archivo
             deleteAllContentFile(nameFile);
+
             for (Car car : cars) {
                 // %1$ -> el primer parametro que le pasamos
                 // - -> alineación a la izquierda
@@ -258,7 +259,7 @@ public class InteractDB {
         // Eliminamos el contenido del archivo
         deleteAllContentFile(this.nameFile);
 
-        if (position != null && !cars.isEmpty()) {
+        if (position != null && !cars.isEmpty() && cars.size()+1 != positionInt) {
             // Este bucle nos permite introducir todos los coches dentro del ArrayList newCar
             for (int i = 0; i < cars.size(); i++) {
                 // Si la posición es la buscamos entra el objeto que le metimos por parametros.
@@ -268,6 +269,7 @@ public class InteractDB {
                 newCars.add(cars.get(i));
             }
         } else {
+            newCars = cars;
             newCars.add(car);
         }
 
@@ -296,43 +298,40 @@ public class InteractDB {
         ArrayList<Car> oldCars = queryAll();
         ArrayList<Car> cars = oldCars;
 
-        if (cars.size() > 1) {
+        if (!cars.isEmpty()) {
             // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
-            Collections.sort(cars, new Comparator<Car>() {
+            cars.sort(new Comparator<Car>() {
                 @Override
                 public int compare(Car c1, Car c2) {
-                    if (mode == "DESC" || mode == "desc") {
+                    if (mode.equals("DESC") || mode.equals("desc")) {
                         // Versión descendente
-                        return new String(c2.matricula).compareTo(new String(c1.matricula));
+                        return c2.matricula.compareTo(c1.matricula);
                     }
                     // Versión ascendente
-                    return new String(c1.matricula).compareTo(new String(c2.matricula));
+                    return c1.matricula.compareTo(c2.matricula);
                 }
             });
-
-            // Eliminamos el contenido del archivo
-            deleteAllContentFile(this.nameFile);
-
+            System.out.println(cars);
             // ya que crea un fichero nuevo e introduce correctamente
             boolean confirm = importFile(this.nameFile, cars);
 
             // Si confirm devuelve true muestra el mensaje exitoso
             if (confirm) {
                 System.out.println("Se ha ordenado los datos de los coches exitosamente");
-                // Eliminamos el backup.dat cuando sabemos que se ha ejecutado exitosamente
             } else {
                 importFile(this.nameFile, oldCars);
                 System.err.println("ERROR No ha sido posible la ordenación de los datos");
             }
         } else {
-            System.out.println("Se ha ordenado los datos de los coches exitosamente");
+            System.err.println("No hay registros por el momento");
         }
     }
 
     public boolean delete(String matricula) throws IOException {
         // Creamos un ArrayList con los coches del Fichero.dat
         ArrayList<Car> cars = queryAll();
-
+        Car searchCar = null;
+        boolean delete = false;
         if (cars.size() >= 1) {
             if (matricula.length() != 7) {
                 System.err.println("ERROR Ha introducido una matricula no válida");
@@ -345,9 +344,15 @@ public class InteractDB {
             for (Car car : cars) {
                 if (car.matricula.equals(matricula)) {
                     newCars.remove(car);
+                    searchCar = car;
+                    delete = true;
+                    break;
                 }
             }
-
+            if (!delete) {
+                System.err.println("No existe el registro especificado");
+                return false;
+            }
             // Eliminamos el contenido del archivo
             deleteAllContentFile(this.nameFile);
 
@@ -357,11 +362,11 @@ public class InteractDB {
 
             // Si confirm devuelve true muestra el mensaje exitoso
             if (confirm) {
-                System.out.println("Se ha eliminado el coche con matricula " + matricula);
+                System.out.println("Se ha eliminado el coche con matricula " + searchCar.toString());
                 return true;
             } else {
                 importFile(this.nameFile, cars);
-                System.err.println("No se ha podido eliminar el coche con matricula " + matricula);
+                System.err.println("ERROR No se ha podido eliminar el coche con matricula " + searchCar.toString());
                 return false;
             }
         } else {
@@ -371,7 +376,6 @@ public class InteractDB {
     }
 
     public boolean edit(String matricula, String field, String value) throws IOException {
-
         // Creamos un ArrayList con los coches del Fichero.dat
         ArrayList<Car> cars = queryAll();
 
@@ -415,21 +419,17 @@ public class InteractDB {
                     }
                 }
             }
-
-            // Eliminamos el contenido del archivo
-            deleteAllContentFile(this.nameFile);
-
             // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
             // ya que crea un fichero nuevo e introduce correctamente
             boolean confirm = importFile(this.nameFile, newCars);
-
+            Car searchCar = queryWhereID(matricula);
             // Si confirm devuelve true muestra el mensaje exitoso
             if (confirm) {
-                System.out.println("Editado con exito el coche con matricula " + matricula);
+                System.out.println("Editado exitosamente el coche " + searchCar.toString());
                 return true;
             } else {
                 importFile(this.nameFile, cars);
-                System.err.println("ERROR No se ha podido eliminar el coche con matricula " + matricula);
+                System.err.println("ERROR No se ha podido eliminar el coche " + searchCar.toString());
                 return false;
             }
         } else {
