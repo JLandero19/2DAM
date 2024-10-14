@@ -311,7 +311,6 @@ public class InteractDB {
                     return c1.matricula.compareTo(c2.matricula);
                 }
             });
-            System.out.println(cars);
             // ya que crea un fichero nuevo e introduce correctamente
             boolean confirm = importFile(this.nameFile, cars);
 
