@@ -124,6 +124,24 @@ public class InteractDB {
         return result;
     }
 
+    public Car queryWherePosition(String position) {
+        ArrayList<Car> cars;
+        Car result = null;
+        cars = queryAll();
+        int positionInt = 0;
+        if (position != null && InteractDB.isInteger(position)) {
+            positionInt = Integer.parseInt(position);
+        }
+
+        for (int i = 0; i < cars.size(); i++) {
+            if (i == positionInt-1) {
+                result = cars.get(i);
+                break;
+            }
+        }
+        return result;
+    }
+
     // Importa el archivo .csv que tenga los campos [Matricula, Marca, Modelo]
     public boolean importFile(String nameFile, ArrayList<Car> cars) {
         // Agregamos a un Array los registros del archivo .csv
@@ -374,7 +392,7 @@ public class InteractDB {
         }
     }
 
-    public boolean edit(String matricula, String field, String value) throws IOException {
+    public boolean editMatricula(String matricula, String field, String value) throws IOException {
         // Creamos un ArrayList con los coches del Fichero.dat
         ArrayList<Car> cars = queryAll();
 
@@ -392,49 +410,115 @@ public class InteractDB {
                 System.err.println("ERROR El campo introducido no es valido");
                 return false;
             }
-
+            boolean confirmEdit = false;
             // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
             ArrayList<Car> newCars = cars;
             // Este bucle lo utilizamos para buscar el coche que queremos eliminar
             for (Car car : newCars) {
                 if (car.matricula.equals(matricula)) {
-                    switch (fieldInt) {
-                        case 1: // 1 -> Campo Marca
-                            // Comprobamos que el VALOR nuevo tenga la longitud correcta
-                            if (value.length() > fields.get("marca") || value.length() < 1) {
-                                System.err.println("ERROR La marca introducida no es valida");
-                                return false;
-                            }
-                            car.marca = value;
-                            break;
-                        case 2: // 2 -> Campo Modelo
-                            // Comprobamos que el VALOR nuevo tenga la longitud correcta
-                            if (value.length() > fields.get("modelo") || value.length() < 1) {
-                                System.err.println("ERROR El modelo introducido no es valido");
-                                return false;
-                            }
-                            car.modelo = value;
-                            break;
-                    }
+                    confirmEdit = editSupport(car, fieldInt, value);
                 }
             }
-            // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
-            // ya que crea un fichero nuevo e introduce correctamente
-            boolean confirm = importFile(this.nameFile, newCars);
-            Car searchCar = queryWhereID(matricula);
-            // Si confirm devuelve true muestra el mensaje exitoso
-            if (confirm) {
-                System.out.println("Editado exitosamente el coche " + searchCar.toString());
-                return true;
+            if (confirmEdit) {
+                // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
+                // ya que crea un fichero nuevo e introduce correctamente
+                boolean confirm = importFile(this.nameFile, newCars);
+                Car searchCar = queryWhereID(matricula);
+                // Si confirm devuelve true muestra el mensaje exitoso
+                if (confirm) {
+                    System.out.println("Editado exitosamente el coche " + searchCar.toString());
+                    return true;
+                } else {
+                    importFile(this.nameFile, cars);
+                    System.err.println("ERROR No se ha podido eliminar el coche " + searchCar.toString());
+                    return false;
+                }
             } else {
-                importFile(this.nameFile, cars);
-                System.err.println("ERROR No se ha podido eliminar el coche " + searchCar.toString());
+                System.err.println("ERROR No se ha podido editar el registro");
                 return false;
             }
         } else {
             System.out.println("No existe el registro especificado");
             return false;
         }
+    }
+
+    public boolean editPosition(String position, String field, String value) throws IOException {
+        // Creamos un ArrayList con los coches del Fichero.dat
+        ArrayList<Car> cars = queryAll();
+        int positionInt = 0;
+        if (cars.size() >= 1) {
+
+            if (isInteger(position) && Integer.parseInt(position) >= 1 && Integer.parseInt(position) <= cars.size()) {
+                positionInt = Integer.parseInt(position);
+            } else {
+                System.err.println("ERROR La posición introducida no es valida");
+                return false;
+            }
+
+            // Convertimos el número introducido por parámetro en un entero
+            int fieldInt = 0;
+            if (isInteger(field)) {
+                fieldInt = Integer.parseInt(field);
+            } else {
+                System.err.println("ERROR El campo introducido no es valido");
+                return false;
+            }
+
+            // Creamos un nuevo ArrayList donde irá el nuevo contenido junto con el actual
+            ArrayList<Car> newCars = cars;
+            boolean confirmEdit = false;
+            // Este bucle lo utilizamos para buscar el coche que queremos eliminar
+            for (int i = 0; i < cars.size(); i++) {
+                if (i == positionInt-1) {
+                    confirmEdit = editSupport(cars.get(i), fieldInt, value);
+                }
+            }
+            if (confirmEdit) {
+                // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
+                // ya que crea un fichero nuevo e introduce correctamente
+                boolean confirm = importFile(this.nameFile, newCars);
+                Car searchCar = queryWherePosition(position);
+                // Si confirm devuelve true muestra el mensaje exitoso
+                if (confirm) {
+                    System.out.println("Editado exitosamente el coche " + searchCar.toString());
+                    return true;
+                } else {
+                    importFile(this.nameFile, cars);
+                    System.err.println("ERROR No se ha podido eliminar el coche " + searchCar.toString());
+                    return false;
+                }
+            } else {
+                System.err.println("ERROR No se ha podido editar el registro");
+                return false;
+            }
+
+        } else {
+            System.out.println("No existe el registro especificado");
+            return false;
+        }
+    }
+
+    public boolean editSupport(Car car, int fieldInt, String value) throws IOException {
+        switch (fieldInt) {
+            case 1: // 1 -> Campo Marca
+                // Comprobamos que el VALOR nuevo tenga la longitud correcta
+                if (value.length() > fields.get("marca") || value.length() < 1) {
+                    System.err.println("ERROR La marca introducida no es valida");
+                    return false;
+                }
+                car.marca = value;
+                break;
+            case 2: // 2 -> Campo Modelo
+                // Comprobamos que el VALOR nuevo tenga la longitud correcta
+                if (value.length() > fields.get("modelo") || value.length() < 1) {
+                    System.err.println("ERROR El modelo introducido no es valido");
+                    return false;
+                }
+                car.modelo = value;
+                break;
+        }
+        return true;
     }
 
     public void deleteAllContentFile(String nameFile) {

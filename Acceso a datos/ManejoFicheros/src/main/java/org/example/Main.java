@@ -274,40 +274,45 @@ public class Main {
         try {
             car = new InteractDB("matricula");
             Car confirmCar = null;
-            String numField = null;
-            String edit = null;
-            if (car.queryAll().size() >= 1) {
+            ArrayList<Car> cars = car.queryAll();
+            if (cars.size() >= 1) {
+                String confirm = null;
                 do {
-                    System.out.println("Introduce la matricula del coche que desea editar:");
-                    String matricula = scan.nextLine();
-                    confirmCar = car.queryWhereID(matricula);
-                    if (confirmCar != null) {
-                        do {
-                            System.out.println("¿Que campo desea editar?");
-                            System.out.println("[1] Marca");
-                            System.out.println("[2] Modelo");
-                            numField = scan.nextLine();
-
-                            if (numField.length() == 1 && InteractDB.isInteger(numField) && Integer.parseInt(numField) >= 1 && Integer.parseInt(numField) <= 2) {
-                                System.out.println("Introduce el nuevo valor");
-                                edit = scan.nextLine();
-
-                                if (edit != null && !edit.isEmpty()) {
-                                    car.edit(matricula, numField, edit);
-                                } else {
-                                    System.err.println("ERROR El nuevo valor no es valido");
-                                    continue;
-                                }
-
-                            } else {
-                                System.err.println("ERROR El campo introducido no es valido");
-                            }
-                        } while (edit == null || edit.isEmpty() || Integer.parseInt(numField) < 1 || Integer.parseInt(numField) > 2);
-                    } else {
-                        System.err.println("No existe un coche con esa matricula");
-                        continue;
+                    System.out.println("¿Quieres buscar el registro por matricula o por posición?[Mat/Pos]");
+                    confirm = scan.nextLine();
+                    if (!confirm.equals("Mat") && !confirm.equals("mat") && !confirm.equals("Pos") && !confirm.equals("pos")) {
+                        System.err.println("ERROR El valor introducido no es valido");
                     }
-                } while (confirmCar == null || numField == null || numField.length() != 1 || !InteractDB.isInteger(numField));
+                } while (!confirm.equals("Mat") && !confirm.equals("mat") && !confirm.equals("Pos") && !confirm.equals("pos"));
+
+                if (confirm.equals("Mat") || confirm.equals("mat")) {
+                    do {
+                        System.out.println("Introduce la matricula del coche que desea editar:");
+                        String matricula = scan.nextLine();
+                        confirmCar = car.queryWhereID(matricula);
+                        if (confirmCar != null) {
+                            supportEditRegister(true, matricula);
+                        } else {
+                            System.err.println("No existe un coche con esa matricula");
+                            continue;
+                        }
+                    } while (confirmCar == null);
+                } else if (confirm.equals("Pos") || confirm.equals("pos")) {
+                    int positionInt = 0;
+                    String position = null;
+                    do {
+                        System.out.println("¿Que registro quieres editar según la posición?[1-" + cars.size() + "]");
+                        position = scan.nextLine();
+
+                        confirmCar = car.queryWherePosition(position);
+                        if (confirmCar != null) {
+                            supportEditRegister(false, position);
+                        } else {
+                            System.err.println("No existe un coche con esa matricula");
+                            continue;
+                        }
+                    } while (position == null || !InteractDB.isInteger(position) || confirmCar == null);
+                }
             } else {
                 System.err.println("No hay registros por el momento");
             }
@@ -316,6 +321,37 @@ public class Main {
         }
         System.out.println();
         main(null);
+    }
+
+    public static void supportEditRegister(boolean mode, String type) throws IOException {
+        Car confirmCar = null;
+        String numField = null;
+        String edit = null;
+        InteractDB car = new InteractDB("matricula");
+        do {
+            System.out.println("¿Que campo desea editar?");
+            System.out.println("[1] Marca");
+            System.out.println("[2] Modelo");
+            numField = scan.nextLine();
+
+            if (InteractDB.isInteger(numField) && Integer.parseInt(numField) >= 1 && Integer.parseInt(numField) <= 2) {
+                System.out.println("Introduce el nuevo valor");
+                edit = scan.nextLine();
+
+                if (edit != null && !edit.isEmpty()) {
+                    if (mode) {
+                        car.editMatricula(type, numField, edit);
+                    } else {
+                        car.editPosition(type, numField, edit);
+                    }
+                } else {
+                    System.err.println("ERROR El nuevo valor no es valido");
+                }
+
+            } else {
+                System.err.println("ERROR El campo introducido no es valido");
+            }
+        } while (edit == null || edit.isEmpty() || Integer.parseInt(numField) < 1 || Integer.parseInt(numField) > 2);
     }
 
     public static void readDataBase() {
