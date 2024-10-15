@@ -258,6 +258,7 @@ public class Main {
                 // Le preguntamos por la matrícula
                 System.out.println("Introduce la matricula del coche que desea eliminar:");
                 String matricula = scan.nextLine();
+                // Para terminar ejecutamos el metodo delete de la clase InteractDB
                 car.delete(matricula);
             } else {
                 System.err.println("No hay registros por el momento");
@@ -272,49 +273,65 @@ public class Main {
     public static void editRegister() {
         InteractDB car = null;
         try {
+            // Instanciamos el objeto InteractDB
             car = new InteractDB("matricula");
+            // Creamos un objeto Car que utilizaremos más adelante
             Car confirmCar = null;
-            String numField = null;
-            String edit = null;
             ArrayList<Car> cars = car.queryAll();
             if (cars.size() >= 1) {
+                // Creamos esta variable para la siguiente pregunta
                 String confirm = null;
                 do {
                     System.out.println("¿Quieres buscar el registro por matricula o por posición?[Mat/Pos]");
                     confirm = scan.nextLine();
-                    if (confirm == null && confirm.length() == 0 && !confirm.equals("Mat") && !confirm.equals("mat") && !confirm.equals("Pos") && !confirm.equals("pos")) {
+                    // Si el usuario no teclea una de las siguientes opciones el programa te envia mensaje de error
+                    if (!confirm.equals("Mat") && !confirm.equals("mat") && !confirm.equals("Pos") && !confirm.equals("pos")) {
                         System.err.println("ERROR El valor introducido no es valido");
                     }
-                } while (confirm == null || confirm.length() == 0 || !confirm.equals("Mat") || !confirm.equals("mat") || !confirm.equals("Pos") || !confirm.equals("pos"));
+                } while (!confirm.equals("Mat") && !confirm.equals("mat") && !confirm.equals("Pos") && !confirm.equals("pos"));
 
+                // Según la opción entra en la opción matrícula o posición
+                // Matrícula
                 if (confirm.equals("Mat") || confirm.equals("mat")) {
                     do {
+                        // Preguntamos por la matricula
                         System.out.println("Introduce la matricula del coche que desea editar:");
                         String matricula = scan.nextLine();
+                        // Confirmamos si existe
                         confirmCar = car.queryWhereID(matricula);
                         if (confirmCar != null) {
+                            // Este metodo es el que termina la ejecución de la edición de un registro
+                            // El mode que es un boolean indica que si es true utilizamos la matrícula para editar
+                            // Si el mode es false utilizamos la posición
                             supportEditRegister(true, matricula);
                         } else {
-                            System.err.println("No existe un coche con esa matricula");
+                            System.err.println("ERROR No existe el coche especificado");
                             continue;
                         }
-                    } while (confirmCar == null || numField == null || numField.length() != 1 || !InteractDB.isInteger(numField));
+                    } while (confirmCar == null);
+                // Posición
                 } else if (confirm.equals("Pos") || confirm.equals("pos")) {
-                    int positionInt = 0;
                     String position = null;
                     do {
+                        // Preguntamos la posición que queremos editar
+                        // cars.size() -> utilizamos para ver la última posición editable
                         System.out.println("¿Que posición quieres editar?[1-" + cars.size() + "]");
                         position = scan.nextLine();
 
+                        // Utilizamos este metodo para confirmar si existe un registro en esta posición
                         confirmCar = car.queryWherePosition(position);
                         if (confirmCar != null) {
+                            // Este metodo es el que termina la ejecución de la edición de un registro
+                            // El mode que es un boolean indica que si es true utilizamos la matrícula para editar
+                            // Si el mode es false utilizamos la posición
                             supportEditRegister(false, position);
                         } else {
-                            System.err.println("No existe un coche con esa matricula");
+                            System.err.println("ERROR No existe el coche especificado");
                             continue;
                         }
                     } while (position == null || !InteractDB.isInteger(position) || confirmCar == null);
                 }
+
             } else {
                 System.err.println("No hay registros por el momento");
             }
@@ -325,47 +342,48 @@ public class Main {
         main(null);
     }
 
+    // Este metodo es un soporte que se utiliza para ayudar al metodo editRegister()
     public static void supportEditRegister(boolean mode, String type) throws IOException {
-        Car confirmCar = null;
         String numField = null;
         String edit = null;
         InteractDB car = new InteractDB("matricula");
-        if (confirmCar != null) {
-            do {
-                System.out.println("¿Que campo desea editar?");
-                System.out.println("[1] Marca");
-                System.out.println("[2] Modelo");
-                numField = scan.nextLine();
+        do {
+            // Preguntamos que campo queremos editar
+            System.out.println("¿Que campo desea editar?");
+            System.out.println("[1] Marca");
+            System.out.println("[2] Modelo");
+            numField = scan.nextLine();
 
-                if (numField.length() == 1 && InteractDB.isInteger(numField) && Integer.parseInt(numField) >= 1 && Integer.parseInt(numField) <= 2) {
-                    System.out.println("Introduce el nuevo valor");
-                    edit = scan.nextLine();
-
-                    if (edit != null && !edit.isEmpty()) {
-                        if (mode) {
-                            car.editMatricula(type, numField, edit);
-                        } else {
-                            car.editPosition(type, numField, edit);
-                        }
+            if (numField.length() == 1 && InteractDB.isInteger(numField) && Integer.parseInt(numField) >= 1 && Integer.parseInt(numField) <= 2) {
+                // Si entra en este if, pregunta por el valor a introducir
+                System.out.println("Introduce el nuevo valor");
+                edit = scan.nextLine();
+                // Según el metodo elegido, será el de matrícula o el de posición
+                if (edit != null && !edit.isEmpty()) {
+                    if (mode) {
+                        car.editMatricula(type, numField, edit);
                     } else {
-                        System.err.println("ERROR El nuevo valor no es valido");
-                        continue;
+                        car.editPosition(type, numField, edit);
                     }
-
                 } else {
-                    System.err.println("ERROR El campo introducido no es valido");
+                    System.err.println("ERROR El nuevo valor no es valido");
+                    continue;
                 }
-            } while (edit == null || edit.isEmpty() || Integer.parseInt(numField) < 1 || Integer.parseInt(numField) > 2);
-        } else {
-            System.err.println("No existe un coche con esa matricula");
-        }
+
+            } else {
+                System.err.println("ERROR El campo introducido no es valido");
+            }
+        } while (edit == null || edit.isEmpty() || Integer.parseInt(numField) < 1 || Integer.parseInt(numField) > 2);
     }
 
+    // Este metodo se utiliza para la lectura de los registros
     public static void readDataBase() {
         InteractDB car = null;
         try {
             car = new InteractDB("matricula");
+            // Sacamos todos los registros
             ArrayList<Car> carList2 = car.queryAll();
+            // Si hay 1 o mas registros los muestra en caso contrario nos envia un mensaje de que no hay registros
             if (InteractDB.existsFile("BBDD_Coches.dat") && carList2.size() > 0) {
                 System.out.println("Matricula | Marca | Modelo");
                 if (carList2 != null) {

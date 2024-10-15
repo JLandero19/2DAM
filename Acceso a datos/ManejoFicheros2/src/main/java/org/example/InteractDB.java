@@ -113,8 +113,10 @@ public class InteractDB {
     public Car queryWhereID(String id) {
         ArrayList<Car> cars;
         Car result = null;
+        // Saca todos los registros del fichero
         cars = queryAll();
 
+        // Busca un registro a través de su matricula
         for (Car car : cars) {
             if (car.matricula.equals(id)) {
                 result = car;
@@ -124,15 +126,18 @@ public class InteractDB {
         return result;
     }
 
+    // Este metodo nos permite buscar un registro que esté en una posición concreta
     public Car queryWherePosition(String position) {
         ArrayList<Car> cars;
         Car result = null;
+        // Saca todos los registros del fichero
         cars = queryAll();
         int positionInt = 0;
+        // Convertimos el String recibido por parametro en un número
         if (position != null && InteractDB.isInteger(position)) {
             positionInt = Integer.parseInt(position);
         }
-
+        // Con este bucle buscamos la posición de ese registro
         for (int i = 0; i < cars.size(); i++) {
             if (i == positionInt-1) {
                 result = cars.get(i);
@@ -448,7 +453,7 @@ public class InteractDB {
         ArrayList<Car> cars = queryAll();
         int positionInt = 0;
         if (cars.size() >= 1) {
-
+            // Comprobamos que el String posicion introducido por parametro es un entero y está dentro de los valores válidos
             if (isInteger(position) && Integer.parseInt(position) >= 1 && Integer.parseInt(position) <= cars.size()) {
                 positionInt = Integer.parseInt(position);
             } else {
@@ -456,7 +461,8 @@ public class InteractDB {
                 return false;
             }
 
-            // Convertimos el número introducido por parámetro en un entero
+            // Comprobamos que el String field introducido por parametro es un entero y está dentro de los valores válidos
+            // Field se refiere a la opción que pusimos de [1] Marca, [2] Modelo
             int fieldInt = 0;
             if (isInteger(field)) {
                 fieldInt = Integer.parseInt(field);
@@ -478,6 +484,7 @@ public class InteractDB {
                 // Utilizamos el metodo para importar ficheros que ya utilizamos en la importación
                 // ya que crea un fichero nuevo e introduce correctamente
                 boolean confirm = importFile(this.nameFile, newCars);
+                // Está función nos permite buscas un registro por la posición
                 Car searchCar = queryWherePosition(position);
                 // Si confirm devuelve true muestra el mensaje exitoso
                 if (confirm) {
