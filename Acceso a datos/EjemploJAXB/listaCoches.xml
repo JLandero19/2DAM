@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<coches>
+    <coche matricula="1111AAA">
+        <marca>Seat</marca>
+        <modelo>Leon</modelo>
+    </coche>
+    <coche matricula="2222BBB">
+        <marca>Nissan</marca>
+        <modelo>GTR</modelo>
+    </coche>
+</coches>
