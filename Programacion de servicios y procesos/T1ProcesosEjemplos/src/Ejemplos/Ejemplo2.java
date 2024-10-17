@@ -3,7 +3,7 @@ import java.io.*;
 public class Ejemplo2 {
 	public static void main(String[] args) throws IOException {
 		// Crea el proceso y lo ejecuta con el .start()
-		Process p = new ProcessBuilder("CMD", "/C", "DIR").start();
+		Process p = new ProcessBuilder("ls","-l").start();
 		try {
 			// Crea un objeto de InputStream
 			// .getInputstream() lo que hace es recoger la salida de Proceso [variable -> Process p]
