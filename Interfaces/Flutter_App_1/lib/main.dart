@@ -4,6 +4,7 @@ import 'package:flutter_app_1/EjemploLayout2.dart';
 import 'package:flutter_app_1/EjemploLayout3RowColumn.dart';
 import 'package:flutter_app_1/EjemploWidget.dart';
 import 'package:flutter_app_1/EjercicioLayout.dart';
+import 'package:flutter_app_1/EjercicioLayout2.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
       ),
 
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: const EjercicioLayout(),
+      home: const EjercicioLayout2(),
     );
   }
 }

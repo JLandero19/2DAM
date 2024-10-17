@@ -15,11 +15,10 @@ class _EjercicioLayoutState extends State<EjercicioLayout> {
         body: SafeArea(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
             children: [
               Container(
                 width: 100,
-                height: double.infinity,
+                // height: double.infinity,
                 color: Colors.red,
               ),
               Column(
@@ -39,7 +38,7 @@ class _EjercicioLayoutState extends State<EjercicioLayout> {
               ),
               Container(
                 width: 100,
-                height: double.infinity,
+                // height: double.infinity,
                 color: Colors.blue,
               ),
             ],
