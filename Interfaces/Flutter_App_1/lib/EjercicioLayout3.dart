@@ -18,6 +18,7 @@ class _EjercicioLayout3State extends State<EjercicioLayout3> {
             children: [
               Column(
                 children: [
+                  // Dado 1
                   Container(
                     width: 100,
                     height: 100,
@@ -25,14 +26,11 @@ class _EjercicioLayout3State extends State<EjercicioLayout3> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            width: 10,
-                            height: 10,
-                            color: Colors.black,
-                          )
+                          point(),
                         ],
                     ),
                   ),
+                  // Dado 2
                   Container(
                     width: 100,
                     height: 100,
@@ -41,29 +39,20 @@ class _EjercicioLayout3State extends State<EjercicioLayout3> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
+                          verticalDirection: VerticalDirection.up,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
                           ],
                         ),
                         Column(
-                          verticalDirection: VerticalDirection.up,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
                           ],
                         )
                       ],
                     ),
                   ),
+                  // Dado 3
                   Container(
                     width: 100,
                     height: 100,
@@ -72,40 +61,26 @@ class _EjercicioLayout3State extends State<EjercicioLayout3> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
+                          verticalDirection: VerticalDirection.up,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
                           ],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
                           ],
                         ),
                         Column(
-                          verticalDirection: VerticalDirection.up,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
                           ],
                         )
                       ],
                     ),
                   ),
+                  // Dado 4
                   Container(
                     width: 100,
                     height: 100,
@@ -116,40 +91,21 @@ class _EjercicioLayout3State extends State<EjercicioLayout3> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
+                            point()
                           ],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
+                            point()
                           ],
                         )
                       ],
                     ),
                   ),
+                  // Dado 5
                   Container(
                     width: 100,
                     height: 100,
@@ -160,51 +116,27 @@ class _EjercicioLayout3State extends State<EjercicioLayout3> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
+                            point()
                           ],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point()
                           ],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
+                            point()
                           ],
                         )
                       ],
                     ),
                   ),
+                  // Dado 6
                   Container(
                     width: 100,
                     height: 100,
@@ -215,47 +147,17 @@ class _EjercicioLayout3State extends State<EjercicioLayout3> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
+                            point(),
+                            point()
                           ],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: 10,
-                              height: 10,
-                              color: Colors.black,
-                            )
+                            point(),
+                            point(),
+                            point()
                           ],
                         )
                       ],
@@ -267,6 +169,15 @@ class _EjercicioLayout3State extends State<EjercicioLayout3> {
             ],
           ),
         )
+    );
+  }
+
+  Widget point() {
+    return Container(
+      margin: const EdgeInsets.all(10),
+      width: 10,
+      height: 10,
+      color: Colors.black,
     );
   }
 }
