@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ControlEnemy : MonoBehaviour
@@ -9,10 +10,13 @@ public class ControlEnemy : MonoBehaviour
     public Vector3 posicionFin;
     private bool moviendoAFin;
     private SpriteRenderer sprite;
+    //private CapsuleCollider2D collider2D;
 
     // Start is called before the first frame update
     void Start()
     {
+        //collider2D = GetComponent<CapsuleCollider2D>();
+        //collider2D.isTrigger = true;
         posicionInicio = transform.position;
         moviendoAFin = true;
         sprite = GetComponentInChildren<SpriteRenderer>();
@@ -47,11 +51,22 @@ public class ControlEnemy : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Player"))
+    //    {
+    //        //collision.gameObject.GetComponent<ControlPlayer>().FinJuego();
+    //        Debug.Log("Me ha hecho daño");
+    //    }
+    //}
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             collision.gameObject.GetComponent<ControlPlayer>().FinJuego();
+            //Debug.Log("Me ha hecho daño");
+
         }
     }
 }

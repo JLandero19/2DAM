@@ -33,11 +33,12 @@ public class ControlPlayer : MonoBehaviour
     private void FixedUpdate()
     {
         float entradaX = Input.GetAxis("Horizontal");
+        fisicas.velocity = new Vector2(entradaX * velocidad, fisicas.velocity.y);
 
         if (fisicas.velocity.x > 0)
         {
             sprite.flipX = false;
-        } else
+        } else if (fisicas.velocity.x < 0)
         {
             sprite.flipX = true;
         }
