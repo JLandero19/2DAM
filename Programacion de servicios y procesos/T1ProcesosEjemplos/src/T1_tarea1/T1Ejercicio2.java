@@ -1,3 +1,5 @@
+package T1_tarea1;
+
 import java.io.IOException;
 
 import static java.lang.Thread.currentThread;

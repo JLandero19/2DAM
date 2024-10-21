@@ -1,0 +1,13 @@
+ El volumen de la unidad C no tiene etiqueta.
+ El número de serie del volumen es: CA2E-7C08
+
+ Directorio de C:\Users\JL19\IntelliJProjects\T1ProcesosEjemplos\src\T1_tarea4
+
+21/10/2024  19:02    <DIR>          .
+21/10/2024  19:02    <DIR>          ..
+21/10/2024  19:03                 0 entrada.txt
+21/10/2024  18:41               366 T1Ejercicio7.java
+21/10/2024  18:49               594 T1Ejercicio8.class
+21/10/2024  19:02               890 T1Ejercicio8.java
+               4 archivos          1.850 bytes
+               2 dirs  600.926.609.408 bytes libres
