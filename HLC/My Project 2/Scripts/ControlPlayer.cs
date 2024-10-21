@@ -9,6 +9,8 @@ public class ControlPlayer : MonoBehaviour
     public int velocidad;
     private Rigidbody2D fisicas;
     private SpriteRenderer sprite;
+    private Animator animator;
+    private float entradaX;
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +19,7 @@ public class ControlPlayer : MonoBehaviour
         fisicas = GetComponent<Rigidbody2D>();
         sprite = GetComponentInChildren<SpriteRenderer>();
         sprite.flipX = false;
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -32,18 +35,19 @@ public class ControlPlayer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float entradaX = Input.GetAxis("Horizontal");
+        entradaX = Input.GetAxis("Horizontal");
         fisicas.velocity = new Vector2(entradaX * velocidad, fisicas.velocity.y);
-
+        AnimatePlayer24();
+        
         if (fisicas.velocity.x > 0)
         {
-            sprite.flipX = false;
+            sprite.flipX = false;            
         } else if (fisicas.velocity.x < 0)
         {
             sprite.flipX = true;
         }
 
-        fisicas.velocity = new Vector2(entradaX * velocidad, fisicas.velocity.y);
+        
     }
 
     private bool TocandoSuelo()
@@ -56,6 +60,11 @@ public class ControlPlayer : MonoBehaviour
     internal void FinJuego()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void AnimatePlayer24()
+    {
+        animator.SetBool("runner", entradaX != 0);
     }
 
 }

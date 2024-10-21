@@ -51,22 +51,21 @@ public class ControlEnemy : MonoBehaviour
         }
     }
 
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.CompareTag("Player"))
-    //    {
-    //        //collision.gameObject.GetComponent<ControlPlayer>().FinJuego();
-    //        Debug.Log("Me ha hecho daño");
-    //    }
-    //}
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             collision.gameObject.GetComponent<ControlPlayer>().FinJuego();
-            //Debug.Log("Me ha hecho daño");
-
+            Debug.Log("Me ha hecho daño");
         }
     }
+
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Player"))
+    //    {
+    //        collision.gameObject.GetComponent<ControlPlayer>().FinJuego();
+    //        //Debug.Log("Me ha hecho daño");
+    //    }
+    //}
 }
