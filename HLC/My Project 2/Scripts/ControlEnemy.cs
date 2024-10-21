@@ -51,30 +51,12 @@ public class ControlEnemy : MonoBehaviour
         }
     }
 
-<<<<<<< Updated upstream
     private void OnCollisionEnter2D(Collision2D collision)
-=======
-    // private void OnCollisionEnter2D(Collision2D collision)
-    // {
-    //    if (collision.gameObject.CompareTag("Player"))
-    //    {
-    //        //collision.gameObject.GetComponent<ControlPlayer>().FinJuego();
-    //        Debug.Log("Me ha hecho daï¿½o");
-    //    }
-    // }
-
-    private void OnTriggerEnter2D(Collider2D collision)
->>>>>>> Stashed changes
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             collision.gameObject.GetComponent<ControlPlayer>().FinJuego();
-<<<<<<< Updated upstream
-            Debug.Log("Me ha hecho daño");
-=======
-            //Debug.Log("Me ha hecho daï¿½o");
-
->>>>>>> Stashed changes
+            Debug.Log("Me ha dado");
         }
     }
 
@@ -83,7 +65,7 @@ public class ControlEnemy : MonoBehaviour
     //    if (collision.gameObject.CompareTag("Player"))
     //    {
     //        collision.gameObject.GetComponent<ControlPlayer>().FinJuego();
-    //        //Debug.Log("Me ha hecho daño");
+    //        //Debug.Log("Me ha hecho daï¿½o");
     //    }
     //}
 }
